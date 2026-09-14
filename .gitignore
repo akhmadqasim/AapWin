@@ -1,0 +1,23 @@
+# build outputs
+out/
+x64/
+**/x64/
+*.tmh
+*.tlog
+*.obj
+*.pdb
+*.ilk
+*.ipdb
+*.iobj
+*.log
+*.recipe
+*.FileListAbsolute.txt
+*.lastbuildstate
+*.cat
+*.cer
+
+# IDE
+.vs/
+*.user
+*.suo
+*.vcxproj.Filters
