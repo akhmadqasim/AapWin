@@ -1,0 +1,73 @@
+;
+; AapL2cap.inx
+;
+; INF for the AirPods AAP L2CAP client driver (experimental).
+; Binds to the BTHENUM PDO that Windows creates for the Apple Accessory
+; Protocol service UUID {74ec2172-0bad-4d01-8f77-997b2be0722a} of a paired
+; AirPods device (shown as "AAP Server" in Device Manager when unbound).
+;
+; Matching is done on the compatible ID without the _GENERIC suffix.
+;
+; Install (after enabling test signing and rebooting):
+;   pnputil /add-driver AapL2cap.inf /install
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Bluetooth
+ClassGuid={e0cbf06c-cd8b-4647-bb8a-263b43f0f974}
+Provider=%ProviderString%
+DriverVer=
+CatalogFile=aapl2cap.cat
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+AapL2cap.sys  = 1,,
+
+;*****************************************
+; AapL2cap  Install Section
+;*****************************************
+
+[Manufacturer]
+%StdMfg%=Standard,NT$ARCH$.10.0...16299
+
+[Standard.NT$ARCH$.10.0...16299]
+%AapL2cap.DeviceDesc% = AapL2cap_Inst, BTHENUM\{74ec2172-0bad-4d01-8f77-997b2be0722a}
+
+[AapL2cap_Inst.NT]
+CopyFiles=DriverStore_Dir
+
+[DriverStore_Dir]
+AapL2cap.sys
+
+;-------------- Service installation
+[AapL2cap_Inst.NT.Services]
+AddService = AapL2cap,%SPSVCINST_ASSOCSERVICE%, AapL2cap_Service_Inst
+
+; -------------- AapL2cap driver install sections
+[AapL2cap_Service_Inst]
+DisplayName    = %AapL2cap.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\AapL2cap.sys
+
+[AapL2cap_Inst.NT.Wdf]
+KmdfService =  AapL2cap, AapL2cap_Inst_wdfsect
+
+[AapL2cap_Inst_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ProviderString = "AapWin"
+StdMfg = "Standard"
+DiskId1 = "AapL2cap installation disk"
+AapL2cap.DeviceDesc = "AirPods AAP L2CAP Client (experimental)"
+AapL2cap.SVCDESC = "AirPods AAP L2CAP Client (experimental)"
